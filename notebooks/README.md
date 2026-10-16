@@ -6,6 +6,7 @@
 - feature selection
 ...
 
+# Exploration
 ## dataset observations
 
 - there is a column named ID so we dont want it to be a feature so on read_csv we use index_col = "ID"
@@ -34,3 +35,5 @@
 - transport method
 - warehouse
 ...
+
+# Clean and Pre-Process the data
