@@ -1,0 +1,8 @@
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+.vscode/
+data/clean/
+data/prepared/
+results/*.joblib
+entrega/

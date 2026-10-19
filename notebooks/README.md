@@ -1,39 +1,28 @@
-# TO DO
-- continue exploration : multivariate relationships
-- handle missing values
-- enconding the string features
-- handle outliers
-- feature selection
-...
+# Notebooks - CRISP-DM
 
-# Exploration
-## dataset observations
+Run the six notebooks in order from this folder, top to bottom in fresh kernels.
 
-- there is a column named ID so we dont want it to be a feature so on read_csv we use index_col = "ID"
-- there is a col named "random noise" so we have to check if there is any relation to the target
-- since customer type is null for all rows its safe to drop
-- checking for duplicates with df.duplicates().sum() we get 10 duplicates
-- while checking missing values there are a lot of features with "65", after looking at those rows we can affirm that they are all from the same rows. (raw_data.isna().sum() == 65).sum() gives us 24. this means that 24 features have 65 NA values, them being the same exact rows. since these give us no info i believe they are safe to drop.
-- total number of rows is 6534, 20% of that is 1300, there are features with more than 1300 total values missing, those could be dropped
-- some float columns contain negative values. those rows can be removed
-- street has around 60% missing values so probably safe to drop
-- lots of very big outliers
-- some variables are floats when should be ints to save space
-    - days_since_previous_purchase
-    - customer_tenure_days
-    - prior_purchase_count
-    - invoice_count_current_purchase
-    - purchase_count_30d
-    - purchase_count_90d
-    - purchase_count_180d
-    - purchase_count_365d
-    - n _detalhes
-- Float values sometimes dont make sense because they have too many decimal cases, for example in Total_a_pagar there is the following value 3506.3900000000003, how is someone going to spend 00000000003 cents?
+| Phase | Notebook | Main work |
+|---|---|---|
+| Business Understanding | `01_Business_Understanding.ipynb` | Task, objectives and protocol. |
+| Data Understanding | `02_Data_Understanding.ipynb` | Quality, dates, missingness and relationships. |
+| Data Preparation | `03_Data_Preparation.ipynb` | Cleaning, split, missing values, log, scale and encoding. |
+| Modeling | `04_Modeling.ipynb` | Temporal folds, baseline, three classifiers and L1 selection. |
+| Evaluation | `05_Evaluation.ipynb` | Fixed later holdout, F1, error counts and groups. |
+| Deployment | `06_Deployment.ipynb` | Full eligible refit and versioned Kaggle CSV. |
 
-#### string features we think might not matter
-- payment type
-- transport method
-- warehouse
-...
+`preparation.py` has three short functions for repeated fitting of the learned
+steps. They reproduce the preparation shown explicitly in notebook 03.
 
-# Clean and Pre-Process the data
+The inner folds start from `data/clean`, not globally prepared matrices, so each
+fold learns its own parameters. Notebook 05 uses the fixed holdout matrices.
+Notebook 06 refits preparation and selection on all 6,469 eligible labelled rows.
+
+Main metric: binary F1. Random forest with L1 wins the inner comparison; the
+later holdout F1 is 0.7778 versus baseline 0.7525. First-purchase prediction is
+a weakness, discussed in Evaluation. No model changes follow that holdout analysis.
+
+The CSV is generated in `submissions/`, with all 986 IDs and no extra index.
+Uploading to Kaggle and course delivery remain separate actions. The final
+project extends this homework with five taught algorithms, optimisation and
+an additional investigation.
