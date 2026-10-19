@@ -5,9 +5,9 @@ Each step of the project has its own notebook, run in this order:
 | step | notebook | status |
 |---|---|---|
 | 1. Exploration | `Homework_Group06_Exploration.ipynb` | in progress |
-| 2. Clean and pre-process | `Homework_Group06_Clean_Pre-Process.ipynb` | done (feature selection and date features left for later) |
+| 2. Clean and pre-process | `Homework_Group06_Clean_Pre-Process.ipynb` | done (date features left for later) |
 | 3. Feature selection | `Homework_Group06_Feature_Selection.ipynb` | done |
-| 4. Modelling and submission | not created yet | to do |
+| 4. Modelling and submission | `Homework_Group06_Modelling.ipynb` | done |
 
 ---
 
@@ -92,7 +92,7 @@ Pipeline (`preprocess`), learned on the training rows of each fold only:
 | text | impute "Missing" -> one-hot (categories with < 30 rows grouped) |
 
 ## Notes
-- outliers are capped, not removed: the IQR rule flags 66% of the rows, and those rows repeat more often (67% vs 54%)
+- outliers are capped, not removed: the IQR rule flags 66% of the rows (they repeat 60% vs 47%), and rows with a top-1% value repeat more often (67% vs 54%), so they carry information
 - the capping step `CapOutliers` is in `cap_outliers.py`, not in the notebook, so the saved pipeline can be loaded by another notebook
 - the missing flags are kept because missing `prior_*` values are linked to the target
 - 0/1 columns are not scaled: scaling stretches rare flags and gives them too much weight in distance-based models
@@ -129,15 +129,29 @@ Pipeline (`preprocess`), learned on the training rows of each fold only:
 
 # 4. Modelling and submission
 
-Not started yet. The notebook goes in this `notebooks` folder (so it can find `cap_outliers.py`) and starts with:
+`Homework_Group06_Modelling.ipynb`: train the model, assess it, and predict `test.csv`. Loads the files saved by steps 2 and 3 (it must stay in this `notebooks` folder so it can find `cap_outliers.py`).
 
-```python
-train = pd.read_csv("../data/pre-processed/train_clean.csv", index_col="ID")
-X, y = train.drop(columns=["repeat_purchase_90d"]), train["repeat_purchase_90d"]
-X_test = pd.read_csv("../data/pre-processed/test_clean.csv", index_col="ID")
-preprocess = joblib.load("../data/pre-processed/preprocess_selected.joblib")   # only the 22 selected features
-time_split = TimeSeriesSplit(n_splits=5)
+## Choices
+- assessment: 5-fold `TimeSeriesSplit`, because `test.csv` is entirely later than train and customers buy many times
+- main metric: **macro F1**, second: **ROC AUC**. Not F1 or accuracy: always predicting "repeat" already gets F1 0.72, but only 0.36 macro F1 and 0.5 ROC AUC
+- models: logistic regression (reference) and random forest; the random forest is better on every metric
+- tuning: small grid on `min_samples_leaf` and `class_weight`; best is 20 and `"balanced"`
 
-model = Pipeline([("preprocess", preprocess), ("model", ...)])
-cross_val_score(model, X, y, cv=time_split)
-```
+## Results
+| model | macro F1 | ROC AUC |
+|---|---|---|
+| always predict 1 | 0.360 | 0.500 |
+| logistic regression | 0.696 | 0.775 |
+| random forest | 0.708 | 0.786 |
+| random forest, tuned (final) | 0.719 | 0.790 |
+
+- stable across the 5 periods: macro F1 0.705-0.727
+- most recent fold: catches 70% of repeat buyers and 77% of non-repeat ones
+
+## Output
+- `submissions/Homework_Group06_submission.csv`: 986 predictions, `ID` unchanged, same format as `sample_submission.csv`
+
+## Ideas to improve
+- tune the 0.5 threshold that turns probabilities into 0/1
+- date features from `purchase_date` (month, day of week)
+- compare more models (the final project asks for at least 5)
