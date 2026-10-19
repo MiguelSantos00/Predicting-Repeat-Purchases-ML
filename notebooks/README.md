@@ -6,7 +6,8 @@ Each step of the project has its own notebook, run in this order:
 |---|---|---|
 | 1. Exploration | `Homework_Group06_Exploration.ipynb` | in progress |
 | 2. Clean and pre-process | `Homework_Group06_Clean_Pre-Process.ipynb` | done (feature selection and date features left for later) |
-| 3. Modelling and submission | not created yet | to do |
+| 3. Feature selection | `Homework_Group06_Feature_Selection.ipynb` | done |
+| 4. Modelling and submission | not created yet | to do |
 
 ---
 
@@ -68,7 +69,6 @@ Each step of the project has its own notebook, run in this order:
 
 ## To do
 - turn `purchase_date` into numbers (month, day of week, ...); for now it is dropped by the pipeline
-- feature selection (better done in modelling, by comparing scores)
 - maybe: a gap between train and validation in `TimeSeriesSplit` (the target looks 90 days ahead)
 
 ## What the notebook does
@@ -104,7 +104,30 @@ Pipeline (`preprocess`), learned on the training rows of each fold only:
 
 ---
 
-# 3. Modelling and submission
+# 3. Feature selection
+
+`Homework_Group06_Feature_Selection.ipynb`: decide which features the model keeps. Loads the files saved by step 2.
+
+## Strategy
+1. identifier-like variables checked first, critically (not kept or dropped automatically)
+2. filter methods: low variance (> 95% same value) -> drop; redundant (Spearman > 0.9) -> drop the weaker; relation with target (Spearman / chi-square, p < 0.05) -> 1 vote
+3. wrapper: RFE (`RFECV`, logistic regression) -> 1 vote
+4. embedded: Lasso (L1 logistic regression) -> 1 vote; random forest importance > `random_noise` -> 1 vote
+5. keep if not low-variance, not redundant, and at least 2 of 4 votes; then checked with cross-validation (F1, `TimeSeriesSplit`)
+
+## Results
+- 22 of 38 features kept, same F1 as all 38 (logistic 0.733 vs 0.730, random forest 0.750 vs 0.751)
+- `customer_id` excluded: linked to the target only because it recognises customers; adds nothing as a number, hurts logistic regression as a category, and can't work for new customers
+- customer-level `clientes.csv` features (`commercial_region`, `island`, `customer_since_year`) dropped: removing them doesn't lower the score
+- the strongest features are purchase frequency (counts over 90-365 days) and the typical gap between purchases
+
+## Output (`data/pre-processed/`)
+- `selected_features.joblib`: the 22 feature names
+- `preprocess_selected.joblib`: the pre-processing pipeline using only those features, not fitted
+
+---
+
+# 4. Modelling and submission
 
 Not started yet. The notebook goes in this `notebooks` folder (so it can find `cap_outliers.py`) and starts with:
 
@@ -112,7 +135,7 @@ Not started yet. The notebook goes in this `notebooks` folder (so it can find `c
 train = pd.read_csv("../data/pre-processed/train_clean.csv", index_col="ID")
 X, y = train.drop(columns=["repeat_purchase_90d"]), train["repeat_purchase_90d"]
 X_test = pd.read_csv("../data/pre-processed/test_clean.csv", index_col="ID")
-preprocess = joblib.load("../data/pre-processed/preprocess.joblib")
+preprocess = joblib.load("../data/pre-processed/preprocess_selected.joblib")   # only the 22 selected features
 time_split = TimeSeriesSplit(n_splits=5)
 
 model = Pipeline([("preprocess", preprocess), ("model", ...)])
