@@ -1,0 +1,55 @@
+feature
+Total Imp_
+Total Portes
+Total Desc_ Global
+Total Desc_ Linha
+Custo
+N_ Detalhes
+invoice_count_current_purchase
+days_since_previous_purchase
+customer_tenure_days
+prior_total_spend
+prior_min_purchase_value
+prior_max_purchase_value
+prior_mean_gap_days
+prior_std_gap_days
+spend_30d
+purchase_count_90d
+spend_90d
+spend_180d
+purchase_count_365d
+spend_365d
+random_noise
+customer_since_year
+purchase_year
+salesperson_Missing
+salesperson_VLOOKUP Master 1
+salesperson_VLOOKUP Master 2
+salesperson_VLOOKUP Master 4
+transport_method_Maybe Tomorrow Delivery 53
+transport_method_Maybe Tomorrow Delivery 68
+warehouse_Missing
+document_series_Ctrl Z Series 1
+country_or_region_Country CT10: Land of The Final Version
+island_Island IS1: The Pivot Archipelago
+island_Missing
+municipality_Municipality MU3: Council of Last Minute Edits
+municipality_Municipality MU9: Council of Last Minute Edits
+municipality_infrequent_sklearn
+city_City CY37: Conditional Format Borough
+city_Missing
+city_infrequent_sklearn
+postal_area_Postal area PA249: Hidden Sheet Sector
+postal_area_infrequent_sklearn
+purchase_month_1
+purchase_month_10
+purchase_month_11
+purchase_month_12
+purchase_month_3
+purchase_month_4
+purchase_month_8
+purchase_month_9
+purchase_weekday_0
+purchase_weekday_1
+purchase_weekday_4
+purchase_weekday_5
