@@ -19,6 +19,9 @@ kernel and its working directory set to `notebooks/`.
 The saved notebooks include executed results. Three small functions in
 `notebooks/preparation.py` reuse the learned preparation steps for inner folds
 and final fitting; the operations are shown individually in Data Preparation.
+Modeling presents each classifier separately and uses one evaluation function
+to repeat the same three folds. Evaluation loads the fitted forest and selected
+column CSV directly. Deployment explicitly rebuilds the selected forest + L1.
 
 Git keeps the source notebooks, raw data, reports, result tables and submission.
 Clean/prepared data, fitted model files and the delivery ZIP are generated locally
