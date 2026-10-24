@@ -23,7 +23,7 @@ def fill_data(train, valid):
 
 def scale_data(train, valid, num):
     money = ["Total a Pagar", "Total Bruto", "Total Liquido", "Total Imp_",
-             "Total Portes", "Total Desc_ Global", "Total Desc_ Linha", "Custo",
+             "Total Desc_ Global", "Total Desc_ Linha", "Custo",
              "prior_total_spend", "prior_mean_purchase_value",
              "prior_min_purchase_value", "prior_max_purchase_value",
              "prior_std_purchase_value", "spend_30d", "spend_90d",

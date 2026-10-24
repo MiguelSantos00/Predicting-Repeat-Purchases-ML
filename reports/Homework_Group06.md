@@ -30,7 +30,11 @@ Impossible historical maxima and annual spend are marked missing. Coherent high
 amounts are retained. Remaining numeric gaps receive training medians and flags;
 text gaps become Missing. Monetary inputs use log1p followed by standard scaling.
 One-hot encoding pools categories with fewer than 20 training purchases.
-Year, month and weekday are candidate calendar inputs; dates are anonymised.
+Month and weekday are candidate calendar inputs; dates are anonymised.
+random_noise and Total Portes are removed: ANOVA, Mann-Whitney and mutual
+information on development data show no relationship with the target.
+Purchase year is not used: test purchases fall in 2025-2026, after all training
+data, so a pattern such as more repeat purchases in 2024 cannot help predict 2026.
 
 ## 3. Assessment protocol
 The latest approximately 20% of dated purchases form a chronological holdout:
@@ -53,23 +57,23 @@ forest (minimum leaf 5). The majority-class baseline uses the same folds.
 Random seeds are fixed. This homework uses a compact comparison, not a broad
 hyperparameter search.
 
-The forest with L1 has mean F1 0.7384 (fold SD 0.0096); baseline F1 is 0.7044.
-Forest without selection scores 0.7368. The difference of 0.0016 is small and not
-conclusive. L1 reduces full-development inputs from 276 to 54. random_noise passes
-the fixed rule and remains included; this is not proof of stable predictive value.
-Its targeted ablation is a useful final-project extension.
+The forest with L1 has mean F1 0.7388 (fold SD 0.0120); baseline F1 is 0.7044.
+Forest without selection scores 0.7376. The difference of 0.0012 is small and not
+conclusive. L1 reduces full-development inputs from 273 to 52. Every model is also
+compared at cutoffs from 0.20 to 0.60. At 0.40, forest + L1 (0.7451) ties with the
+forest without selection (0.7457); we keep the simpler forest + L1.
 
 ## 5. Fixed holdout result
-The selected forest achieves F1 0.7778, precision 0.7869,
-recall 0.7688 and accuracy 0.7350. Baseline F1 is
-0.7525. The absolute F1 gain is 2.53 percentage points.
-Confusion counts are TN=352, FP=163, FN=181, TP=602.
+With the 0.40 cutoff, the selected forest achieves F1 0.7915, precision 0.7209,
+recall 0.8774 and accuracy 0.7211. Baseline F1 is
+0.7525. The absolute F1 gain is 3.90 percentage points.
+Confusion counts are TN=249, FP=266, FN=96, TP=687.
 
-F1 is 0.7910 for customers seen in development and 0.6230 for those unseen.
+F1 is 0.8008 for customers seen in development and 0.7000 for those unseen.
 Of the latter group's 145 purchases, 101 already have supplied purchase history.
 Unseen in development therefore does not mean first purchase. The 44 first
-purchases contain 12 positives but no true positives from the classifier (F1=0).
-This is a concrete cold-start weakness, with a small subgroup sample. No model
+purchases contain 12 positives; the classifier finds 5 (F1 0.4348), against none
+at the 0.5 cutoff. This cold-start weakness remains, with a small subgroup sample. No model
 changes follow this analysis. The business brief gives no costs or margins, so
 we do not translate these results into profit.
 
@@ -77,10 +81,10 @@ we do not translate these results into profit.
 Deployment refits the chosen method on all 6,469 eligible labelled purchases,
 including the former gap. Test starts 98 days after the final training purchase,
 so all retained training targets are mature. Preparation is relearned from training
-only, producing 302 inputs; L1 selects 58 before fitting the same forest settings.
+only, producing 299 inputs; L1 selects 56 before fitting the same forest settings and 0.40 cutoff.
 
-ML_Group_06_Version01.csv contains exactly 986 original IDs and binary predictions:
-645 positives and 341 negatives. It has only ID and repeat_purchase_90d, without
+ML_Group_06_Version03.csv contains exactly 986 original IDs and binary predictions:
+767 positives and 219 negatives. It has only ID and repeat_purchase_90d, without
 an extra index. These are prediction counts, not test-performance estimates.
 Kaggle upload and the public score are pending. The six notebooks reproduce the CSV.
 

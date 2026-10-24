@@ -27,9 +27,10 @@ Git keeps the source notebooks, raw data, reports, result tables and submission.
 Clean/prepared data, fitted model files and the delivery ZIP are generated locally
 and excluded from version control. Running notebooks 03 to 06 recreates them.
 
-The notebooks were executed with the existing Anaconda Python 3.11.5 installation,
-pandas 2.0.3, NumPy 1.24.3 and scikit-learn 1.3.0. The environment file records the
-core versions used. A fresh Conda installation of that file has not been tested.
+The notebooks were executed in the `machine_learning` Conda environment with
+Python 3.13.5, pandas 3.0.3, NumPy 2.4.6 and scikit-learn 1.9.0. The environment
+file records the core versions used. scikit-learn 1.8 or later is required: the
+L1 selector uses `l1_ratio=1`, which older versions ignore. A fresh Conda installation of that file has not been tested.
 To create a separate environment:
 
 ```text
@@ -44,20 +45,22 @@ Three expanding temporal folds inside development compare logistic regression,
 a decision tree and random forest, with and without L1 feature selection.
 Every fold learns its own imputation, scaling, encoding and selection.
 
-Random forest with L1 is selected by mean inner F1 (0.7384, against baseline
-0.7044). The L1 choice reduces development inputs from 276 to 54. Its advantage
-over forest without selection (0.7368) is small and not conclusive.
+Random forest with L1 is selected by mean inner F1 (0.7388, against baseline
+0.7044). The L1 choice reduces development inputs from 273 to 52. Its advantage
+over forest without selection (0.7376) is small and not conclusive. Every model is
+also compared at cutoffs from 0.20 to 0.60. At 0.40, forest + L1 (0.7451) and
+forest without selection (0.7457) are tied, and the simpler forest + L1 is kept.
 
 On the later 1,298-row holdout, the fixed solution achieves:
 
 | Solution | F1 | Precision | Recall | Accuracy |
 |---|---:|---:|---:|---:|
 | Majority baseline | 0.7525 | 0.6032 | 1.0000 | 0.6032 |
-| Random forest + L1 | 0.7778 | 0.7869 | 0.7688 | 0.7350 |
+| Random forest + L1, cutoff 0.40 | 0.7915 | 0.7209 | 0.8774 | 0.7211 |
 
-There are 163 false positives and 181 false negatives. Performance is weaker
+There are 266 false positives and 96 false negatives. Performance is weaker
 for customers unseen in development (101 of their 145 purchases already have
-history); none of the 12 positive cases among 44 first purchases are
+history); 5 of the 12 positive cases among 44 first purchases are
 identified. These limitations are discussed in Evaluation.
 
 The earlier group notebook explored the full training file, so the local holdout
@@ -70,7 +73,11 @@ is not completely untouched. No Kaggle score has been observed or reported.
 - `data/prepared/`: development, holdout and test matrices for the original fixed split.
 - `notebooks/`: the six phases and the three preparation helper functions.
 - `results/`: fold scores, selected features, fitted development model and holdout results.
-- `submissions/ML_Group_06_Version01.csv`: 986 original test IDs and binary predictions.
+- `submissions/ML_Group_06_Version03.csv`: 986 original test IDs and binary predictions.
+- `submissions/ML_Group_06_Version02.csv`: earlier version with the default 0.5 cutoff
+  (holdout F1 0.7818).
+- `submissions/ML_Group_06_Version01.csv`: earlier version that still used
+  `random_noise`, `Total Portes` and the purchase year (holdout F1 0.7778).
 - `reports/`: the two-page homework PDF and its editable Markdown text.
 - `assigment instructions/`: the professor's original briefs.
 
@@ -80,14 +87,16 @@ undated/incomplete rows are excluded. IDs and target are excluded from inputs.
 
 Cleaning reconstructs historical averages from total/count and treats impossible
 maxima and annual spend as missing. This assumes totals and counts are reliable.
-Coherent high values are retained; monetary inputs receive log1p before standard
+`random_noise` and `Total Portes` are removed after statistical tests showed no
+relationship with the target. Purchase year is not used, because all test
+purchases fall in 2025-2026, after the training data. Coherent high values are retained; monetary inputs receive log1p before standard
 scaling. Missing-value flags are kept and categories occurring fewer than 20
 times in the current training split are pooled.
 
 Deployment refits the same selected method on all 6,469 eligible labelled rows,
 including the former gap. The first test date is 98 days after the last training
-purchase, so the training targets are mature. Final preparation yields 302 inputs,
-of which L1 selects 58. Test contributes no fitted parameters. Fixed random seeds
+purchase, so the training targets are mature. Final preparation yields 299 inputs,
+of which L1 selects 56. Test contributes no fitted parameters. Fixed random seeds
 make the versioned CSV reproducible; it contains only `ID` and `repeat_purchase_90d`.
 
 ## Delivery status

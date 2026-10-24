@@ -19,7 +19,7 @@ fold learns its own parameters. Notebook 05 uses the fixed holdout matrices.
 Notebook 06 refits preparation and selection on all 6,469 eligible labelled rows.
 
 Main metric: binary F1. Random forest with L1 wins the inner comparison; the
-later holdout F1 is 0.7778 versus baseline 0.7525. First-purchase prediction is
+later holdout F1, with a 0.40 cutoff chosen on the folds, is 0.7915 versus baseline 0.7525. First-purchase prediction is
 a weakness, discussed in Evaluation. No model changes follow that holdout analysis.
 
 The CSV is generated in `submissions/`, with all 986 IDs and no extra index.

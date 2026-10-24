@@ -1,6 +1,5 @@
 feature
 Total Imp_
-Total Portes
 Total Desc_ Linha
 Custo
 N_ Detalhes
@@ -16,9 +15,7 @@ purchase_count_90d
 spend_90d
 purchase_count_365d
 spend_365d
-random_noise
 customer_since_year
-purchase_year
 prior_mean_gap_days_missing
 payment_type_Maybe Tomorrow Payment 7
 salesperson_Missing
@@ -31,6 +28,7 @@ transport_method_Maybe Tomorrow Delivery 71
 transport_method_Maybe Tomorrow Delivery 72
 transport_method_Maybe Tomorrow Delivery 80
 warehouse_Missing
+document_series_Ctrl Z Series 2
 document_series_Ctrl Z Series 3
 country_or_region_Country CT10: Land of The Final Version
 commercial_region_Region RG17: We Will See Later

@@ -1,6 +1,5 @@
 feature
 Total Imp_
-Total Portes
 Total Desc_ Global
 Total Desc_ Linha
 Custo
@@ -19,19 +18,18 @@ spend_90d
 spend_180d
 purchase_count_365d
 spend_365d
-random_noise
 customer_since_year
-purchase_year
 salesperson_Missing
 salesperson_VLOOKUP Master 1
 salesperson_VLOOKUP Master 2
 salesperson_VLOOKUP Master 4
 transport_method_Maybe Tomorrow Delivery 53
+transport_method_Maybe Tomorrow Delivery 61
 transport_method_Maybe Tomorrow Delivery 68
 warehouse_Missing
-document_series_Ctrl Z Series 1
+document_series_Ctrl Z Series 2
+document_series_Ctrl Z Series 3
 country_or_region_Country CT10: Land of The Final Version
-island_Island IS1: The Pivot Archipelago
 island_Missing
 municipality_Municipality MU3: Council of Last Minute Edits
 municipality_Municipality MU9: Council of Last Minute Edits
