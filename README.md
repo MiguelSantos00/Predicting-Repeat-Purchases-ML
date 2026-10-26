@@ -110,10 +110,7 @@ selection and course delivery have not been performed. Use team `ML_Group_06`
 and the versioned filename. The public leaderboard uses 70% of test rows; it
 should not replace the local assessment protocol.
 
-## Credits
+## Authors
 
-The original repository credits Miguel Santos, Miguel Nunes and Ricardo Lourenço.
-The group will confirm the full member list and contribution percentages for the
-final-project version. Original group notebooks remain in Git history. Work is
-on `codex/crisp-dm-preparation`, based on `homework`; `feature/pipeline` was not
-used as the implementation base.
+The repository credits Miguel Santos, Miguel Nunes and Ricardo Lourenço and Miguel Serra.
+
